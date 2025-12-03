@@ -1,0 +1,67 @@
+#define BLYNK_PRINT Serial
+
+/* Fill in information from Blynk Device Info here */
+#define BLYNK_TEMPLATE_ID "TMPL2KyLRVjJ9"
+#define BLYNK_TEMPLATE_NAME "MOTOR"
+#define BLYNK_AUTH_TOKEN "MI1--GL8NnAWLjW1OiBXqKNYrAamC-Ee"
+
+#include <WiFi.h>
+#include <WiFiClient.h>
+#include <BlynkSimpleEsp32.h>
+
+char ssid[] = "angel";
+char pass[] = "12345678";
+int led = 2;
+int IN1 = 23;
+int IN2 = 22;
+int tiempo = 1;
+int dir = 0;
+void setup()
+
+{
+  // Debug console
+  Serial.begin(115200);
+
+  pinMode(led,OUTPUT);
+  pinMode(IN1,OUTPUT);
+  pinMode(IN2,OUTPUT);
+  
+  Blynk.begin(BLYNK_AUTH_TOKEN, ssid, pass);
+}
+BLYNK_WRITE(V0)
+{
+    int pinLed = param.asInt(); 
+  if(pinLed==1){
+    for(int i=0;i<5;i++){
+      digitalWrite(led, HIGH);
+      delay(500);
+      digitalWrite(led, LOW);
+      delay(500);
+    }
+  }
+}
+
+BLYNK_WRITE(V3)
+{
+  if(param.asInt()){
+    if(dir==1){
+      digitalWrite(IN1, HIGH);
+      digitalWrite(IN2, LOW);
+    }else{
+      digitalWrite(IN1, LOW);
+      digitalWrite(IN2, HIGH);
+    }
+    delay(tiempo * 1000);
+  }
+  digitalWrite(IN1, LOW);
+  digitalWrite(IN2, LOW);
+}
+
+BLYNK_WRITE(V4)
+{
+  dir = param.asInt();
+}
+void loop()
+{
+  Blynk.run(); 
+}
